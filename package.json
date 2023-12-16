@@ -9,13 +9,23 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": ["onDebugAdapterProtocolTracker:node"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "bintreevisualised.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "bintreevisualised.logValue",
+        "category": "BinTree",
+        "title": "log value"
+      },
+      {
+        "command": "bintreevisualised.readValue",
+        "category": "BinTree",
+        "title": "Read value"
       }
     ]
   },
