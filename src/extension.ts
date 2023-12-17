@@ -1,6 +1,7 @@
 import { debug } from 'console';
 import * as vscode from 'vscode';
 import { TreeNode } from "./treenode"
+import { promises } from 'dns';
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -17,46 +18,53 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function getDebugSession(){
-	const session = vscode.debug.activeDebugSession;
+	return vscode.debug.activeDebugSession;
+}
 
-	if (!session)
-	{
+async function getThreadId(session: vscode.DebugSession): Promise<number | undefined> {
+	const response_thread = await session.customRequest("threads");
+
+	if (!response_thread) {
+		vscode.window.showErrorMessage("Could not recieve current thread.");
+		return;
+	}
+
+	return response_thread.threads[0].id;
+}
+
+async function getRootReference(session: vscode.DebugSession, threadId: number): Promise<number | undefined> {
+	const stackResponse = await session.customRequest("stackTrace", { "threadId": threadId });
+
+	if (!stackResponse) {
+		vscode.window.showErrorMessage("Could not recieve call stack.");
+		return;
+	}
+
+	const frameId = stackResponse.stackFrames[0].id;
+
+	const response_variable = await session.customRequest("evaluate", {"expression": "root", "frameId": frameId});
+	let reference: number = response_variable?.variablesReference;
+
+	return reference;
+}
+
+async function buildTree() {
+	let session: vscode.DebugSession | undefined = getDebugSession();
+
+	if (!session) {
 		vscode.window.showErrorMessage("Debug session is not started.");
 		return;
 	}
 
-	return session;
-}
+	let threadId: number | undefined = await getThreadId(session);
 
-async function buildTree() {
-	const session = getDebugSession();
-
-	if (!session)
-	{
+	if (!threadId) {
 		return;
 	}
 
-	const response_thread = await session?.customRequest("threads");
+	let rootReference: number| undefined = await getRootReference(session, threadId);
 
-	if (!response_thread) {
-		return;
-	}
-
-	let threadId: number = response_thread.threads[0].id;
-
-	const response_frame = await session?.customRequest("stackTrace", { "threadId": threadId });
-	const frameId = response_frame.stackFrames[0].id;
-
-	const response_variable = await session?.customRequest("evaluate", {"expression": "root", "frameId": frameId});
-	let value: string = response_variable?.result;
-	let type: string = response_variable?.type;
-	let reference: number = response_variable?.variablesReference;
-
-	console.log(value);
-	console.log(type);
-	console.log(reference);
-
-	const response_varaibles = await session?.customRequest("variables", {"variablesReference": reference});
+	const response_varaibles = await session.customRequest("variables", {"variablesReference": rootReference});
 
 	console.log(response_varaibles);
 }
