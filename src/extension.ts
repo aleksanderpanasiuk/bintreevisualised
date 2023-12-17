@@ -40,10 +40,15 @@ async function getRootReference(session: vscode.DebugSession, threadId: number):
 		return;
 	}
 
-	const frameId = stackResponse.stackFrames[0].id;
+	let frameId: number = stackResponse.stackFrames[0].id;
 
-	const response_variable = await session.customRequest("evaluate", {"expression": "root", "frameId": frameId});
-	let reference: number = response_variable?.variablesReference;
+	const evaluateResponse = await session.customRequest("evaluate", {"expression": "root", "frameId": frameId});
+	if (!evaluateResponse) {
+		vscode.window.showErrorMessage("Could not evaluate root.");
+		return;
+	}
+
+	let reference: number = evaluateResponse.variablesReference;
 
 	return reference;
 }
@@ -64,7 +69,11 @@ async function buildTree() {
 
 	let rootReference: number| undefined = await getRootReference(session, threadId);
 
-	const response_varaibles = await session.customRequest("variables", {"variablesReference": rootReference});
+	if (!rootReference) {
+		return;
+	}
+
+	let response_varaibles: object = await session.customRequest("variables", {"variablesReference": rootReference});
 
 	console.log(response_varaibles);
 }
