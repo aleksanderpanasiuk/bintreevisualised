@@ -18,11 +18,6 @@
         "title": "Hello World"
       },
       {
-        "command": "bintreevisualised.logValue",
-        "category": "BinTree",
-        "title": "log value"
-      },
-      {
         "command": "bintreevisualised.readValue",
         "category": "BinTree",
         "title": "Read value"

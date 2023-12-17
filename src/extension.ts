@@ -10,16 +10,10 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello World from BinTreeVisualised!');
 	});
 
-	vscode.commands.registerCommand("bintreevisualised.logValue", test);
 	vscode.commands.registerCommand("bintreevisualised.readValue", getValue);
 
 	context.subscriptions.push(disposable);
 
-	vscode.debug.onDidChangeActiveDebugSession(test);
-}
-
-function test() {
-	console.log("debug changed");
 }
 
 async function getValue() {
