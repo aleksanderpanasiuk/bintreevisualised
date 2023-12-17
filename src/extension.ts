@@ -3,22 +3,20 @@ import * as vscode from 'vscode';
 import { TreeNode } from "./treenode";
 
 
-export function activate(context: vscode.ExtensionContext) {
-	console.log('Congratulations, your extension "bintreevisualised" is now active!');
+let rootNode: TreeNode | undefined;
 
-	let disposable = vscode.commands.registerCommand('bintreevisualised.helloWorld', () => {
-		vscode.window.showInformationMessage('Hello World from BinTreeVisualised!');
-	});
+
+export function activate(context: vscode.ExtensionContext) {
+	console.log("BinTreeVisualised is now active!");
 
 	vscode.commands.registerCommand("bintreevisualised.buildTree", buildTree);
-
-	context.subscriptions.push(disposable);
-
 }
+
 
 function getDebugSession(){
 	return vscode.debug.activeDebugSession;
 }
+
 
 async function getThreadId(session: vscode.DebugSession): Promise<number | undefined> {
 	const response_thread = await session.customRequest("threads");
@@ -30,6 +28,7 @@ async function getThreadId(session: vscode.DebugSession): Promise<number | undef
 
 	return response_thread.threads[0].id;
 }
+
 
 async function getRootReference(session: vscode.DebugSession, threadId: number): Promise<number | undefined> {
 	const stackResponse = await session.customRequest("stackTrace", { "threadId": threadId });
@@ -51,6 +50,7 @@ async function getRootReference(session: vscode.DebugSession, threadId: number):
 
 	return reference;
 }
+
 
 async function getNode(session: vscode.DebugSession, reference: number): Promise<TreeNode | undefined> {
 	const responseVariable = await session.customRequest("variables", {"variablesReference": reference});
@@ -104,6 +104,7 @@ async function getNode(session: vscode.DebugSession, reference: number): Promise
 	}
 }
 
+
 async function buildTree() {
 	let session: vscode.DebugSession | undefined = getDebugSession();
 	if (!session) {
@@ -121,12 +122,10 @@ async function buildTree() {
 		return;
 	}
 
-	let node: TreeNode | undefined = await getNode(session, rootReference);
-
-	console.log(node);
+	rootNode = await getNode(session, rootReference);
 }
 
-// This method is called when your extension is deactivated
+
 export function deactivate() {
-	console.log("deactiavted");
+	console.log("BinTreeVisualised deactiavted");
 }

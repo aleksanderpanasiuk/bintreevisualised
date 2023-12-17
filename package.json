@@ -14,10 +14,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "bintreevisualised.helloWorld",
-        "title": "Hello World"
-      },
-      {
         "command": "bintreevisualised.buildTree",
         "category": "BinTree",
         "title": "Build Tree"
