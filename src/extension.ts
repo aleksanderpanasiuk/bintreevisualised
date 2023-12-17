@@ -1,7 +1,6 @@
 import { debug } from 'console';
 import * as vscode from 'vscode';
-import { TreeNode } from "./treenode"
-import { promises } from 'dns';
+import { TreeNode } from "./treenode";
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -53,29 +52,78 @@ async function getRootReference(session: vscode.DebugSession, threadId: number):
 	return reference;
 }
 
+async function getNode(session: vscode.DebugSession, reference: number): Promise<TreeNode | undefined> {
+	const responseVariable = await session.customRequest("variables", {"variablesReference": reference});
+	if (!responseVariable) {
+		vscode.window.showErrorMessage("Could not evaluate variables for ${reference}.");
+		return;
+	}
+
+	const variables = responseVariable.variables;
+
+	let value: number | undefined;
+	let leftNodeReference: number | undefined;
+	let rightNodeReference: number | undefined;
+
+	for (var variable of variables) {
+		if (variable.name === "val") {
+			value = Number(variable.value);
+		}
+		else if (variable.name === "left") {
+			leftNodeReference = variable.variablesReference;
+		}
+		else if (variable.name === "right") {
+			rightNodeReference = variable.variablesReference;
+		}
+	}
+
+	if (value) {
+		let node: TreeNode = new TreeNode(value);
+
+		if (leftNodeReference) {
+			let leftNode: TreeNode | undefined = await getNode(session, leftNodeReference);
+
+			if (leftNode) {
+				node.left = leftNode;
+			}
+		}
+
+		if (rightNodeReference) {
+			let rightNode: TreeNode | undefined = await getNode(session, rightNodeReference);
+
+			if (rightNode) {
+				node.right = rightNode;
+			}
+		}
+
+		return node;
+	}
+	else {
+		vscode.window.showErrorMessage("Variable doesn't have 'value' variable.");
+		return;
+	}
+}
+
 async function buildTree() {
 	let session: vscode.DebugSession | undefined = getDebugSession();
-
 	if (!session) {
 		vscode.window.showErrorMessage("Debug session is not started.");
 		return;
 	}
 
 	let threadId: number | undefined = await getThreadId(session);
-
 	if (!threadId) {
 		return;
 	}
 
 	let rootReference: number| undefined = await getRootReference(session, threadId);
-
 	if (!rootReference) {
 		return;
 	}
 
-	let response_varaibles: object = await session.customRequest("variables", {"variablesReference": rootReference});
+	let node: TreeNode | undefined = await getNode(session, rootReference);
 
-	console.log(response_varaibles);
+	console.log(node);
 }
 
 // This method is called when your extension is deactivated
