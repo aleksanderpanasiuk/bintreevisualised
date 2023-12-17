@@ -18,9 +18,9 @@
         "title": "Hello World"
       },
       {
-        "command": "bintreevisualised.readValue",
+        "command": "bintreevisualised.buildTree",
         "category": "BinTree",
-        "title": "Read value"
+        "title": "Build Tree"
       }
     ]
   },

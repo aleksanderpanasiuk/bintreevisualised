@@ -10,14 +10,32 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello World from BinTreeVisualised!');
 	});
 
-	vscode.commands.registerCommand("bintreevisualised.readValue", getValue);
+	vscode.commands.registerCommand("bintreevisualised.buildTree", buildTree);
 
 	context.subscriptions.push(disposable);
 
 }
 
-async function getValue() {
+function getDebugSession(){
 	const session = vscode.debug.activeDebugSession;
+
+	if (!session)
+	{
+		vscode.window.showErrorMessage("Debug session is not started.");
+		return;
+	}
+
+	return session;
+}
+
+async function buildTree() {
+	const session = getDebugSession();
+
+	if (!session)
+	{
+		return;
+	}
+
 	const response_thread = await session?.customRequest("threads");
 
 	if (!response_thread) {
