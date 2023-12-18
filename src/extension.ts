@@ -130,10 +130,10 @@ async function buildTree() {
 	rootNode = undefined;
 	rootNode = await getNode(session, rootReference);
 
-	buildPanel();
+	displayTree();
 }
 
-function buildPanel() {
+function displayTree() {
 	const panel = vscode.window.createWebviewPanel(
 	  "binarytree",
 	  "Binary Tree",
