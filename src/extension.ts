@@ -12,7 +12,9 @@ let rightName: string = "right";
 export function activate(context: vscode.ExtensionContext) {
 	console.log("BinTreeVisualised is now active!");
 
-	vscode.commands.registerCommand("bintreevisualised.buildTree", buildTree);
+	context.subscriptions.push(
+		vscode.commands.registerCommand("bintreevisualised.buildTree", buildTree)
+	);
 }
 
 
@@ -127,6 +129,45 @@ async function buildTree() {
 
 	rootNode = undefined;
 	rootNode = await getNode(session, rootReference);
+
+	buildPanel();
+}
+
+function buildPanel() {
+	const panel = vscode.window.createWebviewPanel(
+	  "binarytree",
+	  "Binary Tree",
+	  vscode.ViewColumn.One,
+	  {}
+	);
+
+	panel.webview.html = getWebviewContent(getTree());
+
+	panel.onDidDispose(
+	  () => {
+	  },
+	  null,
+	);
+  }
+
+
+function getWebviewContent(tree: string): string{
+	return `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+	  <meta charset="UTF-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  <title>Binary Tree</title>
+  </head>
+  <body>
+	  ${tree}
+  </body>
+  </html>`;
+}
+
+
+function getTree(): string {
+	return "tree";
 }
 
 
