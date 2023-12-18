@@ -4,6 +4,9 @@ import { TreeNode } from "./treenode";
 
 
 let rootNode: TreeNode | undefined;
+let valueName: string = "val";
+let leftName: string = "left";
+let rightName: string = "right";
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -66,13 +69,13 @@ async function getNode(session: vscode.DebugSession, reference: number): Promise
 	let rightNodeReference: number | undefined;
 
 	for (var variable of variables) {
-		if (variable.name === "val") {
+		if (variable.name === valueName) {
 			value = Number(variable.value);
 		}
-		else if (variable.name === "left") {
+		else if (variable.name === leftName) {
 			leftNodeReference = variable.variablesReference;
 		}
-		else if (variable.name === "right") {
+		else if (variable.name === rightName) {
 			rightNodeReference = variable.variablesReference;
 		}
 	}
@@ -122,6 +125,7 @@ async function buildTree() {
 		return;
 	}
 
+	rootNode = undefined;
 	rootNode = await getNode(session, rootReference);
 }
 
