@@ -42,10 +42,10 @@ function getTree(root: TreeNode | null): string {
 
     let result: string = "";
 
-    result += root.val;
+    result += root.val + "<br>";
 
     result += getTree(root.left);
-    result += getTree(root.left);
+    result += getTree(root.right);
 
-	return "tree";
+	return result;
 }
