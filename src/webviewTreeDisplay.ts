@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { TreeNode } from "./treenode";
 
 
-export function displayTree(root: TreeNode | undefined) {
+export function displayTree(root: TreeNode | null) {
 	const panel = vscode.window.createWebviewPanel(
 	  "binarytree",
 	  "Binary Tree",
@@ -10,7 +10,7 @@ export function displayTree(root: TreeNode | undefined) {
 	  {}
 	);
 
-	panel.webview.html = getWebviewContent(getTree());
+	panel.webview.html = getWebviewContent(getTree(root));
 
 	panel.onDidDispose(
 	  () => {
@@ -35,6 +35,17 @@ function getWebviewContent(tree: string): string{
 }
 
 
-function getTree(): string {
+function getTree(root: TreeNode | null): string {
+    if (!root) {
+        return "";
+    }
+
+    let result: string = "";
+
+    result += root.val;
+
+    result += getTree(root.left);
+    result += getTree(root.left);
+
 	return "tree";
 }

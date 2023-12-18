@@ -4,7 +4,7 @@ import { TreeNode } from "./treenode";
 import { displayTree } from "./webviewTreeDisplay";
 
 
-let rootNode: TreeNode | undefined;
+let rootNode: TreeNode | null;
 let valueName: string = "val";
 let leftName: string = "left";
 let rightName: string = "right";
@@ -58,11 +58,11 @@ async function getRootReference(session: vscode.DebugSession, threadId: number):
 }
 
 
-async function getNode(session: vscode.DebugSession, reference: number): Promise<TreeNode | undefined> {
+async function getNode(session: vscode.DebugSession, reference: number): Promise<TreeNode | null> {
 	const responseVariable = await session.customRequest("variables", {"variablesReference": reference});
 	if (!responseVariable) {
 		vscode.window.showErrorMessage("Could not evaluate variables for ${reference}.");
-		return;
+		return null;
 	}
 
 	const variables = responseVariable.variables;
@@ -87,7 +87,7 @@ async function getNode(session: vscode.DebugSession, reference: number): Promise
 		let node: TreeNode = new TreeNode(value);
 
 		if (leftNodeReference) {
-			let leftNode: TreeNode | undefined = await getNode(session, leftNodeReference);
+			let leftNode: TreeNode | null = await getNode(session, leftNodeReference);
 
 			if (leftNode) {
 				node.left = leftNode;
@@ -95,7 +95,7 @@ async function getNode(session: vscode.DebugSession, reference: number): Promise
 		}
 
 		if (rightNodeReference) {
-			let rightNode: TreeNode | undefined = await getNode(session, rightNodeReference);
+			let rightNode: TreeNode | null = await getNode(session, rightNodeReference);
 
 			if (rightNode) {
 				node.right = rightNode;
@@ -106,7 +106,7 @@ async function getNode(session: vscode.DebugSession, reference: number): Promise
 	}
 	else {
 		vscode.window.showErrorMessage("Variable doesn't have 'value' variable.");
-		return;
+		return null;
 	}
 }
 
@@ -128,7 +128,7 @@ async function buildTree() {
 		return;
 	}
 
-	rootNode = undefined;
+	rootNode = null;
 	rootNode = await getNode(session, rootReference);
 
 	displayTree(rootNode);
