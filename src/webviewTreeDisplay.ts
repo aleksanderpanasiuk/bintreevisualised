@@ -20,18 +20,18 @@ export function displayTree(root: TreeNode | null) {
 }
 
 
-function getWebviewContent(tree: string): string{
+function getWebviewContent(tree: string): string {
 	return `<!DOCTYPE html>
-  <html lang="en">
-  <head>
-	  <meta charset="UTF-8">
-	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	  <title>Binary Tree</title>
-  </head>
-  <body>
-	  ${tree}
-  </body>
-  </html>`;
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Binary Tree</title>
+    </head>
+    <body>
+        ${tree}
+    </body>
+    </html>`;
 }
 
 
