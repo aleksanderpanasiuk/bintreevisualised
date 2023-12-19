@@ -5,6 +5,7 @@ import { displayTree } from "./webviewTreeDisplay";
 
 
 let rootNode: TreeNode | null;
+let maxTreeDepth: number | null;
 let valueName: string = "val";
 let leftName: string = "left";
 let rightName: string = "right";
@@ -58,7 +59,7 @@ async function getRootReference(session: vscode.DebugSession, threadId: number):
 }
 
 
-async function getNode(session: vscode.DebugSession, reference: number): Promise<TreeNode | null> {
+async function getNode(session: vscode.DebugSession, reference: number, treeDepth: number): Promise<[TreeNode, number] | null> {
 	const responseVariable = await session.customRequest("variables", {"variablesReference": reference});
 	if (!responseVariable) {
 		vscode.window.showErrorMessage("Could not evaluate variables for ${reference}.");
@@ -86,23 +87,28 @@ async function getNode(session: vscode.DebugSession, reference: number): Promise
 	if (value) {
 		let node: TreeNode = new TreeNode(value);
 
+		let leftDepth: number = 0;
+		let rightDepth: number = 0;
+
 		if (leftNodeReference) {
-			let leftNode: TreeNode | null = await getNode(session, leftNodeReference);
+			let leftNode: [TreeNode, number] | null = await getNode(session, leftNodeReference, treeDepth+1);
 
 			if (leftNode) {
-				node.left = leftNode;
+				node.left = leftNode[0];
+				leftDepth = leftNode[1];
 			}
 		}
 
 		if (rightNodeReference) {
-			let rightNode: TreeNode | null = await getNode(session, rightNodeReference);
+			let rightNode: [TreeNode, number] | null = await getNode(session, rightNodeReference, treeDepth+1);
 
 			if (rightNode) {
-				node.right = rightNode;
+				node.right = rightNode[0];
+				rightDepth = rightNode[1];
 			}
 		}
 
-		return node;
+		return [node, Math.max(treeDepth, leftDepth, rightDepth)];
 	}
 	else {
 		vscode.window.showErrorMessage("Variable doesn't have 'value' variable.");
@@ -129,9 +135,17 @@ async function buildTree() {
 	}
 
 	rootNode = null;
-	rootNode = await getNode(session, rootReference);
+	maxTreeDepth = 0;
+	let nodeData: [TreeNode, number] | null = await getNode(session, rootReference, 0);
 
-	displayTree(rootNode);
+	if (nodeData) {
+		rootNode = nodeData[0];
+		maxTreeDepth = nodeData[1];
+
+		console.log(maxTreeDepth);
+	}
+
+	displayTree(rootNode, maxTreeDepth);
 }
 
 
