@@ -6,3 +6,4 @@ node_modules
 .vscode/
 .eslintrc.json
 .vscodeignore
+.vscode-test.mjs
