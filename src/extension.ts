@@ -1,7 +1,8 @@
 import { debug } from 'console';
 import * as vscode from 'vscode';
 import { TreeNode } from "./treenode";
-import { displayTree } from "./webviewTreeDisplay";
+import internal from 'stream';
+import { getWebviewContent } from "./webviewTreeDisplay";
 
 
 let rootNode: TreeNode | null;
@@ -10,13 +11,56 @@ let valueName: string = "val";
 let leftName: string = "left";
 let rightName: string = "right";
 
+let panel: vscode.WebviewPanel;
+
 
 export function activate(context: vscode.ExtensionContext) {
 	console.log("BinTreeVisualised is now active!");
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("bintreevisualised.buildTree", buildTree)
+		vscode.commands.registerCommand("bintreevisualised.buildTree", buildTree),
+		vscode.workspace.onDidChangeTextDocument(editorchangeevent => {
+			if (editorchangeevent) {
+				console.log("sad");
+			}
+		}),
+		vscode.debug.registerDebugAdapterTrackerFactory('*', {
+			createDebugAdapterTracker(session: vscode.DebugSession) {
+			  return {
+				onWillReceiveMessage: m => updateTree(m.command),
+				onDidSendMessage: m => {}
+			  };
+			}
+		})
 	);
+}
+
+
+export function displayTree(root: TreeNode | null, maxTreeDepth: number) {
+	if (!panel) {
+		panel = vscode.window.createWebviewPanel(
+			"binarytree",
+			"Binary Tree",
+			vscode.ViewColumn.One,
+			{}
+		);
+
+		panel.onDidDispose(
+		() => {
+		},
+		null,
+		);
+	}
+
+	panel.webview.html = getWebviewContent(root, maxTreeDepth);
+}
+
+
+async function updateTree(command: string) {
+	if (command === "continue" || command === "stepIn" ||
+		command === "next" || command === "stepOut") {
+			await buildTree();
+		}
 }
 
 
@@ -62,7 +106,7 @@ async function getRootReference(session: vscode.DebugSession, threadId: number):
 async function getNode(session: vscode.DebugSession, reference: number, treeDepth: number): Promise<[TreeNode, number] | null> {
 	const responseVariable = await session.customRequest("variables", {"variablesReference": reference});
 	if (!responseVariable) {
-		vscode.window.showErrorMessage("Could not evaluate variables for ${reference}.");
+		vscode.window.showErrorMessage(`Could not evaluate variables for ${reference}.`);
 		return null;
 	}
 
@@ -111,7 +155,6 @@ async function getNode(session: vscode.DebugSession, reference: number, treeDept
 		return [node, Math.max(treeDepth, leftDepth, rightDepth)];
 	}
 	else {
-		vscode.window.showErrorMessage("Variable doesn't have 'value' variable.");
 		return null;
 	}
 }
@@ -141,8 +184,6 @@ async function buildTree() {
 	if (nodeData) {
 		rootNode = nodeData[0];
 		maxTreeDepth = nodeData[1];
-
-		console.log(maxTreeDepth);
 	}
 
 	displayTree(rootNode, maxTreeDepth);
