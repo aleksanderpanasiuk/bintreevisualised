@@ -5,18 +5,13 @@ import internal from 'stream';
 import { getWebviewContent } from "./webviewTreeDisplay";
 
 
-let rootNode: TreeNode | null;
-let maxTreeDepth: number | null;
 let valueName: string | undefined = vscode.workspace.getConfiguration().get("bintreevisualised.valueName");
 let leftName: string | undefined = vscode.workspace.getConfiguration().get("bintreevisualised.leftName");
-let rightName: string | undefined = vscode.workspace.getConfiguration().get("bintreevisualised.rightName");;
-
-if (!valueName || !leftName || !rightName) {
-	vscode.window.showErrorMessage("Failed to load settings.");
-	deactivate();
-}
+let rightName: string | undefined = vscode.workspace.getConfiguration().get("bintreevisualised.rightName");
 
 let panel: vscode.WebviewPanel | undefined;
+let rootNode: TreeNode | null;
+let maxTreeDepth: number | null;
 
 
 export function activate(context: vscode.ExtensionContext) {
