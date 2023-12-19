@@ -37,7 +37,8 @@ export function displayTree(root: TreeNode | null, maxTreeDepth: number) {
 		panel = vscode.window.createWebviewPanel(
 			"binarytree",
 			"Binary Tree",
-			vscode.ViewColumn.One,
+			{	preserveFocus: true,
+				viewColumn: vscode.ViewColumn.Beside},
 			{}
 		);
 
