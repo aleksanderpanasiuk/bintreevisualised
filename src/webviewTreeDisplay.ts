@@ -1,29 +1,13 @@
 import * as vscode from 'vscode';
 import { TreeNode } from "./treenode";
-import internal from 'stream';
+
 
 const nodeSize: number = 30;
 const nodeSizeHalf: number = nodeSize/2;
 
-export function displayTree(root: TreeNode | null, maxTreeDepth: number) {
-	const panel = vscode.window.createWebviewPanel(
-	  "binarytree",
-	  "Binary Tree",
-	  vscode.ViewColumn.One,
-	  {}
-	);
 
-	panel.webview.html = getWebviewContent(getTree(root, maxTreeDepth, [0, 1]));
-
-	panel.onDidDispose(
-	  () => {
-	  },
-	  null,
-	);
-}
-
-
-function getWebviewContent(tree: [string, number, [number, number]]): string {
+export function getWebviewContent(root: TreeNode | null, maxTreeDepth: number): string {
+    let tree: [string, number, [number, number]] = getTree(root, maxTreeDepth, [0, 1]);
 	return `<!DOCTYPE html>
     <html lang="en">
     <head>
