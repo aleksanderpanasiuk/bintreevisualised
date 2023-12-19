@@ -18,12 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 	console.log("BinTreeVisualised is now active!");
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("bintreevisualised.buildTree", buildTree),
-		vscode.workspace.onDidChangeTextDocument(editorchangeevent => {
-			if (editorchangeevent) {
-				console.log("sad");
-			}
-		}),
+		vscode.commands.registerCommand("bintreevisualised.buildTree", getTreeFromDebugger),
 		vscode.debug.registerDebugAdapterTrackerFactory('*', {
 			createDebugAdapterTracker(session: vscode.DebugSession) {
 			  return {
@@ -60,7 +55,7 @@ export function displayTree(root: TreeNode | null, maxTreeDepth: number) {
 async function updateTree(command: string) {
 	if ((command === "continue" || command === "stepIn" ||
 		command === "next" || command === "stepOut") && panel) {
-			await buildTree();
+			await getTreeFromDebugger();
 		}
 }
 
@@ -104,7 +99,7 @@ async function getRootReference(session: vscode.DebugSession, threadId: number):
 }
 
 
-async function getNode(session: vscode.DebugSession, reference: number, treeDepth: number): Promise<[TreeNode, number] | null> {
+async function buildTree(session: vscode.DebugSession, reference: number, treeDepth: number): Promise<[TreeNode, number] | null> {
 	const responseVariable = await session.customRequest("variables", {"variablesReference": reference});
 	if (!responseVariable) {
 		vscode.window.showErrorMessage(`Could not evaluate variables for ${reference}.`);
@@ -136,7 +131,7 @@ async function getNode(session: vscode.DebugSession, reference: number, treeDept
 		let rightDepth: number = 0;
 
 		if (leftNodeReference) {
-			let leftNode: [TreeNode, number] | null = await getNode(session, leftNodeReference, treeDepth+1);
+			let leftNode: [TreeNode, number] | null = await buildTree(session, leftNodeReference, treeDepth+1);
 
 			if (leftNode) {
 				node.left = leftNode[0];
@@ -145,7 +140,7 @@ async function getNode(session: vscode.DebugSession, reference: number, treeDept
 		}
 
 		if (rightNodeReference) {
-			let rightNode: [TreeNode, number] | null = await getNode(session, rightNodeReference, treeDepth+1);
+			let rightNode: [TreeNode, number] | null = await buildTree(session, rightNodeReference, treeDepth+1);
 
 			if (rightNode) {
 				node.right = rightNode[0];
@@ -161,7 +156,7 @@ async function getNode(session: vscode.DebugSession, reference: number, treeDept
 }
 
 
-async function buildTree() {
+async function getTreeFromDebugger() {
 	let session: vscode.DebugSession | undefined = getDebugSession();
 	if (!session) {
 		vscode.window.showErrorMessage("Debug session is not started.");
@@ -180,7 +175,7 @@ async function buildTree() {
 
 	rootNode = null;
 	maxTreeDepth = 0;
-	let nodeData: [TreeNode, number] | null = await getNode(session, rootReference, 0);
+	let nodeData: [TreeNode, number] | null = await buildTree(session, rootReference, 0);
 
 	if (nodeData) {
 		rootNode = nodeData[0];
