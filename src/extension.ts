@@ -7,9 +7,14 @@ import { getWebviewContent } from "./webviewTreeDisplay";
 
 let rootNode: TreeNode | null;
 let maxTreeDepth: number | null;
-let valueName: string = "val";
-let leftName: string = "left";
-let rightName: string = "right";
+let valueName: string | undefined = vscode.workspace.getConfiguration().get("bintreevisualised.valueName");
+let leftName: string | undefined = vscode.workspace.getConfiguration().get("bintreevisualised.leftName");
+let rightName: string | undefined = vscode.workspace.getConfiguration().get("bintreevisualised.rightName");;
+
+if (!valueName || !leftName || !rightName) {
+	vscode.window.showErrorMessage("Failed to load settings.");
+	deactivate();
+}
 
 let panel: vscode.WebviewPanel | undefined;
 

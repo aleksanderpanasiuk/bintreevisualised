@@ -2,8 +2,17 @@ import * as vscode from 'vscode';
 import { TreeNode } from "./treenode";
 
 
-const nodeSize: number = 30;
-const nodeSizeHalf: number = nodeSize/2;
+let configNodeSize: number | undefined = vscode.workspace.getConfiguration().get("bintreevisualised.nodeSize");
+let nodeSize: number;
+
+if (configNodeSize) {
+    nodeSize = configNodeSize;
+}
+else {
+    nodeSize = 30;
+}
+
+let nodeSizeHalf: number = nodeSize/2;
 
 
 export function getWebviewContent(root: TreeNode | null, maxTreeDepth: number): string {

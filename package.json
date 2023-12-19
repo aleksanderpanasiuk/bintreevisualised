@@ -18,7 +18,33 @@
         "category": "BinTree",
         "title": "Build Tree"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "BinTreeVisualised",
+      "properties": {
+        "bintreevisualised.nodeSize": {
+          "type": "number",
+          "default": 30,
+          "description": "Size of individial node in pixels."
+        },
+        "bintreevisualised.valueName": {
+          "type": "string",
+          "default": "val",
+          "description": "Tree node value variable name."
+        },
+        "bintreevisualised.leftName": {
+          "type": "string",
+          "default": "left",
+          "description": "Tree node left child variable name."
+        }
+        ,
+        "bintreevisualised.rightName": {
+          "type": "string",
+          "default": "right",
+          "description": "Tree node right child variable name."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
