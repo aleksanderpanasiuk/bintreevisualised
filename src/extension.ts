@@ -11,7 +11,7 @@ let valueName: string = "val";
 let leftName: string = "left";
 let rightName: string = "right";
 
-let panel: vscode.WebviewPanel;
+let panel: vscode.WebviewPanel | undefined;
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -47,6 +47,7 @@ export function displayTree(root: TreeNode | null, maxTreeDepth: number) {
 
 		panel.onDidDispose(
 		() => {
+			panel = undefined;
 		},
 		null,
 		);
@@ -57,8 +58,8 @@ export function displayTree(root: TreeNode | null, maxTreeDepth: number) {
 
 
 async function updateTree(command: string) {
-	if (command === "continue" || command === "stepIn" ||
-		command === "next" || command === "stepOut") {
+	if ((command === "continue" || command === "stepIn" ||
+		command === "next" || command === "stepOut") && panel) {
 			await buildTree();
 		}
 }
