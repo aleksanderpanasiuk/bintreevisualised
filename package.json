@@ -9,7 +9,7 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": ["onDebugAdapterProtocolTracker:node"],
+  "activationEvents": ["onDebugAdapterProtocolTracker:node", "onStartupFinished"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
