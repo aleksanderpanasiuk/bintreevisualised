@@ -8,6 +8,7 @@ import { getWebviewContent } from "./webviewTreeDisplay";
 let valueName: string | undefined = vscode.workspace.getConfiguration().get("bintreevisualised.valueName");
 let leftName: string | undefined = vscode.workspace.getConfiguration().get("bintreevisualised.leftName");
 let rightName: string | undefined = vscode.workspace.getConfiguration().get("bintreevisualised.rightName");
+let rootName: string | undefined = vscode.workspace.getConfiguration().get("bintreevisualised.rootName");
 
 let panel: vscode.WebviewPanel | undefined;
 let rootNode: TreeNode | null;
@@ -87,7 +88,7 @@ async function getRootReference(session: vscode.DebugSession, threadId: number):
 
 	let frameId: number = stackResponse.stackFrames[0].id;
 
-	const evaluateResponse = await session.customRequest("evaluate", {"expression": "root", "frameId": frameId});
+	const evaluateResponse = await session.customRequest("evaluate", {"expression": rootName, "frameId": frameId});
 	if (!evaluateResponse) {
 		vscode.window.showErrorMessage("Could not evaluate root.");
 		return;

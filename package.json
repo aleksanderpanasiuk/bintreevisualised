@@ -27,6 +27,11 @@
           "default": 30,
           "description": "Size of individial node in pixels."
         },
+        "bintreevisualised.rootName": {
+          "type": "string",
+          "default": "root",
+          "description": "Tree node root variable name."
+        },
         "bintreevisualised.valueName": {
           "type": "string",
           "default": "val",
