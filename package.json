@@ -3,6 +3,8 @@
   "displayName": "BinTreeVisualised",
   "description": "Easy tool for visualising binary trees while debugging",
   "repository": "https://github.com/aleksanderpanasiuk/bintreevisualised/tree/master",
+  "publisher": "AleksanderPanasiuk",
+  "icon": "resources/icon.png",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.85.0"
