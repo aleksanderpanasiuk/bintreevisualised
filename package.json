@@ -10,7 +10,7 @@
     "vscode": "^1.85.0"
   },
   "categories": [
-    "Other"
+    "Debuggers", "Visualization"
   ],
   "activationEvents": ["onStartupFinished"],
   "main": "./dist/extension.js",
