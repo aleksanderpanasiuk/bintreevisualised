@@ -1,0 +1,74 @@
+{
+  "name": "bintreevisualised",
+  "displayName": "BinTreeVisualised",
+  "description": "Easy tool for visualising binary trees while debugging",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "bintreevisualised.buildTree",
+        "category": "BinTree",
+        "title": "Build Tree"
+      }
+    ],
+    "configuration": {
+      "title": "BinTreeVisualised",
+      "properties": {
+        "bintreevisualised.nodeSize": {
+          "type": "number",
+          "default": 30,
+          "description": "Size of individial node in pixels."
+        },
+        "bintreevisualised.valueName": {
+          "type": "string",
+          "default": "val",
+          "description": "Tree node value variable name."
+        },
+        "bintreevisualised.leftName": {
+          "type": "string",
+          "default": "left",
+          "description": "Tree node left child variable name."
+        }
+        ,
+        "bintreevisualised.rightName": {
+          "type": "string",
+          "default": "right",
+          "description": "Tree node right child variable name."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.2",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "@vscode/test-cli": "^0.0.4",
+    "@vscode/test-electron": "^2.3.8"
+  }
+}
