@@ -10,6 +10,7 @@ Before trying out the extension you must verify that correct variable names are 
 
 ## Extension Settings
 
+* `bintreevisualised.rootName`: Current tree root.
 * `bintreevisualised.valueName`: Tree node value variable name.
 * `bintreevisualised.leftName`: Tree node left child variable name.
 * `bintreevisualised.rightName`: Tree node right child variable name.
